@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dart_frog/dart_frog.dart';
-import '../../../lib/db.dart';
+import 'package:aeroleaf_api/db.dart';
 
 Future<Response> onRequest(RequestContext context, String id) async {
   final db = getDb();
