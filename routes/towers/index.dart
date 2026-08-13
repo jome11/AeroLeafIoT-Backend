@@ -3,17 +3,38 @@ import 'package:dart_frog/dart_frog.dart';
 import '../../lib/db.dart';
 
 Future<Response> onRequest(RequestContext context) async {
-  if (context.request.method != HttpMethod.post) {
-    return Response(statusCode: 405);
-  }
-
   final db = getDb();
-  final body = jsonDecode(await context.request.body()) as Map<String, dynamic>;
 
-  db.execute(
-    'INSERT OR IGNORE INTO towers (id, name, crop_type) VALUES (?, ?, ?)',
-    [body['id'], body['name'] ?? body['id'], body['crop_type'] ?? 'Lettuce'],
-  );
+  switch (context.request.method) {
+    case HttpMethod.post:
+      final body = jsonDecode(await context.request.body()) as Map<String, dynamic>;
 
-  return Response.json(statusCode: 201, body: {'status': 'registered', 'id': body['id']});
+      final id = body['id'] as String?;
+      if (id == null || id.isEmpty) {
+        return Response.json(statusCode: 400, body: {'error': 'id is required'});
+      }
+
+      db.execute(
+        'INSERT OR IGNORE INTO towers (id, name, crop_type) VALUES (?, ?, ?)',
+        [id, body['name'] ?? id, body['crop_type'] ?? 'Lettuce'],
+      );
+
+      return Response.json(statusCode: 201, body: {'status': 'registered', 'id': id});
+
+    case HttpMethod.get:
+      final result = db.select('SELECT id, name, crop_type, created_at FROM towers');
+      final towers = result
+          .map((row) => {
+                'id': row['id'],
+                'name': row['name'],
+                'crop_type': row['crop_type'],
+                'created_at': row['created_at'],
+              })
+          .toList();
+
+      return Response.json(body: towers);
+
+    default:
+      return Response(statusCode: 405);
+  }
 }

@@ -8,7 +8,9 @@ environment:
 
 dependencies:
   dart_frog: ^1.1.0
+  http: ^1.2.0
   sqlite3: 2.4.6
+  
 
 dev_dependencies:
   dart_frog_lint: ^0.1.0

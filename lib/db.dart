@@ -54,4 +54,15 @@ void _initTables(Database db) {
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
   ''');
+    db.execute('''
+    CREATE TABLE IF NOT EXISTS device_state (
+      tower_id TEXT PRIMARY KEY,
+      automatic_mode INTEGER DEFAULT 1,
+      pump_manual INTEGER DEFAULT 0,
+      pump_status INTEGER DEFAULT 0,
+      pump_remaining_time INTEGER DEFAULT 0,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (tower_id) REFERENCES towers(id)
+    )
+  ''');
 }
