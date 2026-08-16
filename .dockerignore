@@ -1,0 +1,8 @@
+.dart_tool/
+.dart_frog/
+build/
+.git/
+.gitignore
+.vscode/
+test/
+*.db

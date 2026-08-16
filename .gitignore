@@ -14,4 +14,4 @@ build/
 .dart_frog
 
 # Test related files
-coverage/
+coverage/aeroleaf.db

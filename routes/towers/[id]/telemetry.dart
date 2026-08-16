@@ -3,11 +3,11 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:aeroleaf_api/db.dart';
 
 Future<Response> onRequest(RequestContext context, String id) async {
-  final db = getDb();
+  final db = await getDb();
 
   if (context.request.method == HttpMethod.post) {
     final body = jsonDecode(await context.request.body()) as Map<String, dynamic>;
-    db.execute(
+    await db.execute(
       'INSERT INTO telemetry (tower_id, tds, temperature, water_level, ph) VALUES (?, ?, ?, ?, ?)',
       [id, body['tds'], body['temperature'], body['water_level'], body['ph']],
     );
@@ -15,7 +15,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
   }
 
   if (context.request.method == HttpMethod.get) {
-    final result = db.select(
+    final result = await db.select(
       'SELECT * FROM telemetry WHERE tower_id = ? ORDER BY recorded_at DESC LIMIT 1',
       [id],
     );

@@ -10,7 +10,7 @@ dependencies:
   dart_frog: ^1.1.0
   http: ^1.2.0
   mime: ^1.0.4
-  sqlite3: 2.4.6
+ 
   
 
 dev_dependencies:

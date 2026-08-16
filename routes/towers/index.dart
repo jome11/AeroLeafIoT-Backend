@@ -3,7 +3,7 @@ import 'package:dart_frog/dart_frog.dart';
 import '../../lib/db.dart';
 
 Future<Response> onRequest(RequestContext context) async {
-  final db = getDb();
+  final db = await getDb();
 
   switch (context.request.method) {
     case HttpMethod.post:
@@ -14,7 +14,7 @@ Future<Response> onRequest(RequestContext context) async {
         return Response.json(statusCode: 400, body: {'error': 'id is required'});
       }
 
-      db.execute(
+      await db.execute(
         'INSERT OR IGNORE INTO towers (id, name, crop_type) VALUES (?, ?, ?)',
         [id, body['name'] ?? id, body['crop_type'] ?? 'Lettuce'],
       );
@@ -22,7 +22,7 @@ Future<Response> onRequest(RequestContext context) async {
       return Response.json(statusCode: 201, body: {'status': 'registered', 'id': id});
 
     case HttpMethod.get:
-      final result = db.select('SELECT id, name, crop_type, created_at FROM towers');
+      final result = await db.select('SELECT id, name, crop_type, created_at FROM towers');
       final towers = result
           .map((row) => {
                 'id': row['id'],

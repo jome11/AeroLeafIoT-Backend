@@ -3,10 +3,10 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:aeroleaf_api/db.dart';
 
 Future<Response> onRequest(RequestContext context, String id) async {
-  final db = getDb();
+  final db = await getDb();
 
   if (context.request.method == HttpMethod.get) {
-    final result = db.select('SELECT * FROM device_state WHERE tower_id = ?', [id]);
+    final result = await db.select('SELECT * FROM device_state WHERE tower_id = ?', [id]);
 
     if (result.isEmpty) {
       return Response.json(body: {
@@ -31,7 +31,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
 
   if (context.request.method == HttpMethod.post) {
     final body = jsonDecode(await context.request.body()) as Map<String, dynamic>;
-    final existing = db.select('SELECT * FROM device_state WHERE tower_id = ?', [id]);
+    final existing = await db.select('SELECT * FROM device_state WHERE tower_id = ?', [id]);
     final current = existing.isNotEmpty ? existing.first : null;
 
     bool boolOr(String key, bool fallback) =>
@@ -45,7 +45,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
     final pumpRemainingTime =
         intOr('pump_remaining_time', (current?['pump_remaining_time'] as int?) ?? 0);
 
-    db.execute(
+    await db.execute(
       '''
       INSERT INTO device_state (tower_id, automatic_mode, pump_manual, pump_status, pump_remaining_time, updated_at)
       VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)

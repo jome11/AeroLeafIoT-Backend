@@ -3,10 +3,10 @@ import 'package:dart_frog/dart_frog.dart';
 import '../../../lib/db.dart';
 
 Future<Response> onRequest(RequestContext context, String id) async {
-  final db = getDb();
+  final db = await getDb();
 
   if (context.request.method == HttpMethod.get) {
-    final result = db.select(
+    final result = await db.select(
       'SELECT * FROM alerts WHERE tower_id = ? ORDER BY created_at DESC',
       [id],
     );
@@ -22,7 +22,7 @@ Future<Response> onRequest(RequestContext context, String id) async {
 
   if (context.request.method == HttpMethod.post) {
     final body = jsonDecode(await context.request.body()) as Map<String, dynamic>;
-    db.execute(
+    await db.execute(
       'INSERT INTO alerts (tower_id, severity, title, description) VALUES (?, ?, ?, ?)',
       [id, body['severity'], body['title'], body['description']],
     );
